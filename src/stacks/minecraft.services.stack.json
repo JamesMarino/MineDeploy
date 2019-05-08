@@ -1,0 +1,118 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Metadata": {
+  },
+  "Parameters": {
+    "HostName": {
+      "Type": "String",
+      "Description": "Hostname such as example.com"
+    }
+  },
+  "Resources": {
+    "MineDeploy": {
+      "Type": "AWS::ECS::Cluster",
+      "Properties": {}
+    },
+    "MineDeployTaskDefinition": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "Family": "MineDeployTaskDefinitionFamily",
+        "ContainerDefinitions": [
+          {
+            "Name": "MineDeployContainer",
+            "Cpu": 10,
+            "Memory": 200,
+            "Image": "itzg/minecraft-server:latest",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "MineDeployLogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "MineDeploy"
+              }
+            },
+            "PortMappings": [
+              {
+                "ContainerPort": 25565
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "MineDeployECSServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ecs.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "ecs-service",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2:Describe*",
+                    "ec2:AuthorizeSecurityGroupIngress"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "MineDeployService": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "MineDeploy"
+        },
+        "DesiredCount": "1",
+        "Role": {
+          "Ref": "MineDeployECSServiceRole"
+        },
+        "TaskDefinition": {
+          "Ref": "MineDeployTaskDefinition"
+        }
+      }
+    },
+    "MineDeployLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "-",
+            [
+              "MineDeployLogGroup",
+              {
+                "Ref": "HostName"
+              }
+            ]
+          ]
+        },
+        "RetentionInDays": 365
+      }
+    }
+  }
+}

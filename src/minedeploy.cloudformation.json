@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "HostName": {
+      "Type": "String",
+      "Description": "Hostname"
+    }
+  },
+  "Resources": {
+    "MinecraftServices": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "./stacks/minecraft.services.stack.json"
+      }
+    },
+    "MinecraftRoutes": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "./stacks/minecraft.hosts.stack.json",
+        "Parameters": {
+          "HostName": {
+            "Ref": "HostName"
+          }
+        }
+      }
+    }
+  }
+}
