@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import withStyles from 'react-jss';
 import { Link } from 'react-router-dom';
 
-import styles from '../styles/css/NavBar.css';
+import styles from '../styles/css/components/NavBar.css';
 import logo from '../images/logo.svg';
 import { staticRoutes } from '../constants/routes.constants';
 

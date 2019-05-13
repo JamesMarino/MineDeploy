@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import withStyles from 'react-jss';
 
-import styles from '../styles/css/RecipeView.css';
+import styles from '../styles/css/views/NewDeploymentView.css';
+import DeploymentForm from '../components/DeploymentForm.component';
+import Header from "../components/Header.component";
 
 class HomeView extends Component {
 
@@ -10,7 +12,8 @@ class HomeView extends Component {
 
         return (
             <div className={classes.container}>
-                <h1>Dashboard Home</h1>
+                <Header headingText="New Deployments" />
+                <DeploymentForm />
             </div>
         );
     }
