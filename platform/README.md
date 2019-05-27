@@ -1,3 +1,14 @@
+## Local Run
+
+```bash
+docker run \
+    --name minecraft \
+    --volume minecraft:/data \
+    --env EULA=TRUE \
+    --publish 25565:25565 \
+    itzg/minecraft-server
+```
+
 ## Deployment
 
 1. Package
@@ -9,7 +20,7 @@ aws cloudformation package \
     --s3-bucket cloud-nested-templates \
     --output-template-file src/minedeploy.deploy.cloudformation.yaml \
     --profile default \
-    --region ap-southeast-2
+    --region us-east-1
 ```
 
 2. Validate
@@ -27,6 +38,7 @@ aws cloudformation create-stack \
 	--stack-name MineDeploy \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
 	--parameters ParameterKey=HostName,ParameterValue=example.com \
+	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
 	--region ap-southeast-2
@@ -38,6 +50,7 @@ aws cloudformation update-stack \
 	--stack-name MineDeploy \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
 	--parameters ParameterKey=HostName,ParameterValue=example.com \
+	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
 	--region ap-southeast-2

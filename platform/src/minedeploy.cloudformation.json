@@ -4,22 +4,46 @@
     "HostName": {
       "Type": "String",
       "Description": "Hostname"
+    },
+    "AvailabilityZone": {
+      "Type": "String",
+      "Description": "Availability Zone"
     }
   },
   "Resources": {
+    "MinecraftNetworking": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "./stacks/minecraft.networking.stack.json",
+        "Parameters": {
+          "AvailabilityZone": {
+            "Ref": "AvailabilityZone"
+          }
+        }
+      }
+    },
     "MinecraftServices": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "./stacks/minecraft.services.stack.json"
-      }
-    },
-    "MinecraftRoutes": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": "./stacks/minecraft.hosts.stack.json",
+        "TemplateURL": "./stacks/minecraft.services.stack.json",
         "Parameters": {
           "HostName": {
             "Ref": "HostName"
+          },
+          "MineDeployVPC": {
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.MineDeployVPC"
+            ]
+          },
+          "MineDeploySubnet": {
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.MineDeploySubnet"
+            ]
+          },
+          "AvailabilityZone": {
+            "Ref": "AvailabilityZone"
           }
         }
       }

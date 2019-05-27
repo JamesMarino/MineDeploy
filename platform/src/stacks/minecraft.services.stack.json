@@ -6,6 +6,18 @@
     "HostName": {
       "Type": "String",
       "Description": "Hostname such as example.com"
+    },
+    "MineDeployVPC": {
+      "Type": "String",
+      "Description": "Mine Deploy ECS VPC"
+    },
+    "MineDeploySubnet": {
+      "Type": "String",
+      "Description": "Mine Deploy ECS Subnet"
+    },
+    "AvailabilityZone": {
+      "Type": "String",
+      "Description": "Availability Zone"
     }
   },
   "Resources": {
@@ -13,16 +25,40 @@
       "Type": "AWS::ECS::Cluster",
       "Properties": {}
     },
+    "MineDeployService": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "MineDeploy"
+        },
+        "DesiredCount": "1",
+        "LaunchType": "EC2",
+        "TaskDefinition": {
+          "Ref": "MineDeployTaskDefinition"
+        }
+      }
+    },
     "MineDeployTaskDefinition": {
       "Type": "AWS::ECS::TaskDefinition",
       "Properties": {
-        "Family": "MineDeployTaskDefinitionFamily",
         "ContainerDefinitions": [
           {
-            "Name": "MineDeployContainer",
-            "Cpu": 10,
-            "Memory": 200,
+            "Cpu": 1024,
+            "Environment": [
+              {
+                "Name": "EULA",
+                "Value": "TRUE"
+              }
+            ],
             "Image": "itzg/minecraft-server:latest",
+            "Memory": 2048,
+            "Name": "MineDeploy",
+            "PortMappings": [
+              {
+                "ContainerPort": 25565,
+                "HostPort": 25565
+              }
+            ],
             "LogConfiguration": {
               "LogDriver": "awslogs",
               "Options": {
@@ -35,66 +71,46 @@
                 "awslogs-stream-prefix": "MineDeploy"
               }
             },
-            "PortMappings": [
+            "MountPoints": [
               {
-                "ContainerPort": 25565
+                "ContainerPath": "/data",
+                "SourceVolume": "MineDeployVolume"
               }
             ]
           }
-        ]
-      }
-    },
-    "MineDeployECSServiceRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "ecs.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "Path": "/",
-        "Policies": [
+        ],
+        "Cpu": 1024,
+        "Memory": 2048,
+        "PlacementConstraints": [
           {
-            "PolicyName": "ecs-service",
-            "PolicyDocument": {
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "ec2:Describe*",
-                    "ec2:AuthorizeSecurityGroupIngress"
-                  ],
-                  "Resource": "*"
-                }
+            "Type": "memberOf",
+            "Expression": {
+              "Fn::Join": [
+                "",
+                [
+                  "attribute:ecs.availability-zone==",
+                  {
+                    "Ref": "AvailabilityZone"
+                  }
+                ]
               ]
             }
           }
+        ],
+        "Volumes": [
+          {
+            "Name": "MineDeployVolume",
+            "DockerVolumeConfiguration": {
+              "Autoprovision": true,
+              "Scope": "shared",
+              "Driver": "rexray/ebs",
+              "DriverOpts": {
+                "volumetype": "gp2",
+                "size": "5"
+              }
+            }
+          }
         ]
-      }
-    },
-    "MineDeployService": {
-      "Type": "AWS::ECS::Service",
-      "Properties": {
-        "Cluster": {
-          "Ref": "MineDeploy"
-        },
-        "DesiredCount": "1",
-        "Role": {
-          "Ref": "MineDeployECSServiceRole"
-        },
-        "TaskDefinition": {
-          "Ref": "MineDeployTaskDefinition"
-        }
       }
     },
     "MineDeployLogGroup": {
@@ -112,6 +128,192 @@
           ]
         },
         "RetentionInDays": 365
+      }
+    },
+    "MineDeployAutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "LaunchConfigurationName": {
+          "Ref": "MineDeployContainerInstances"
+        },
+        "AvailabilityZones": [
+          "ap-southeast-2a"
+        ],
+        "DesiredCapacity": "1",
+        "MaxSize": "1",
+        "MinSize": "1",
+        "VPCZoneIdentifier": [
+          {
+            "Ref": "MineDeploySubnet"
+          }
+        ]
+      }
+    },
+    "MineDeployInstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "All Traffic",
+        "VpcId": {
+          "Ref": "MineDeployVPC"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 0,
+            "ToPort": 65535,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 0,
+            "ToPort": 65535,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "mine-deploy-ecs-service-policy",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ecs:CreateCluster",
+                    "ecs:DeregisterContainerInstance",
+                    "ecs:DiscoverPollEndpoint",
+                    "ecs:Poll",
+                    "ecs:RegisterContainerInstance",
+                    "ecs:StartTelemetrySession",
+                    "ecs:Submit*",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "mine-deploy-rex-ray-policy",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2:AttachVolume",
+                    "ec2:CreateVolume",
+                    "ec2:CreateSnapshot",
+                    "ec2:CreateTags",
+                    "ec2:DeleteVolume",
+                    "ec2:DeleteSnapshot",
+                    "ec2:DescribeAvailabilityZones",
+                    "ec2:DescribeInstances",
+                    "ec2:DescribeVolumes",
+                    "ec2:DescribeVolumeAttribute",
+                    "ec2:DescribeVolumeStatus",
+                    "ec2:DescribeSnapshots",
+                    "ec2:CopySnapshot",
+                    "ec2:DescribeSnapshotAttribute",
+                    "ec2:DetachVolume",
+                    "ec2:ModifySnapshotAttribute",
+                    "ec2:ModifyVolumeAttribute",
+                    "ec2:DescribeTags"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    },
+    "MineDeployContainerInstances": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "KeyName": "JamesMarino",
+        "ImageId": "ami-09475847322e5566f",
+        "InstanceType": "m4.large",
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceProfile"
+        },
+        "SecurityGroups": [
+          {
+            "Ref": "MineDeployInstanceSecurityGroup"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -xe\n",
+                "echo ECS_CLUSTER=",
+                {
+                  "Ref": "MineDeploy"
+                },
+                ">> /etc/ecs/ecs.config\n",
+                "yum install -y aws-cfn-bootstrap\n",
+                "/opt/aws/bin/cfn-signal -e $? --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                " --stack ",
+                {
+                  "Ref": "AWS::StackName"
+                },
+                " --resource ",
+                {
+                  "Fn::Sub": [
+                    "${ECSAutoScalingGroup} ",
+                    {
+                      "ECSAutoScalingGroup": "MineDeployAutoScalingGroup"
+                    }
+                  ]
+                },
+                "\n",
+                "docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=",
+                {
+                  "Ref": "AWS::Region"
+                },
+                " --grant-all-permissions\n"
+              ]
+            ]
+          }
+        }
       }
     }
   }
