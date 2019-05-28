@@ -43,7 +43,7 @@
       "Properties": {
         "ContainerDefinitions": [
           {
-            "Cpu": 1024,
+            "Cpu": 2048,
             "Environment": [
               {
                 "Name": "EULA",
@@ -51,7 +51,7 @@
               }
             ],
             "Image": "itzg/minecraft-server:latest",
-            "Memory": 2048,
+            "Memory": 7975,
             "Name": "MineDeploy",
             "PortMappings": [
               {
@@ -79,8 +79,8 @@
             ]
           }
         ],
-        "Cpu": 1024,
-        "Memory": 2048,
+        "Cpu": 2048,
+        "Memory": 7975,
         "PlacementConstraints": [
           {
             "Type": "memberOf",
