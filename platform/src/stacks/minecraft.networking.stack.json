@@ -1,0 +1,90 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "AvailabilityZone": {
+      "Type": "String",
+      "Description": "Availability Zone"
+    }
+  },
+  "Resources": {
+    "MineDeployVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16"
+      }
+    },
+    "MineDeployInternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "MineDeployInternetGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "MineDeployVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "MineDeployInternetGateway"
+        }
+      }
+    },
+    "MineDeployRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "MineDeployVPC"
+        }
+      }
+    },
+    "MineDeployRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "MineDeployInternetGatewayAttachment",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "MineDeployInternetGateway"
+        },
+        "RouteTableId": {
+          "Ref": "MineDeployRouteTable"
+        }
+      }
+    },
+    "MineDeploySubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": {
+          "Ref": "AvailabilityZone"
+        },
+        "CidrBlock": "10.0.0.0/16",
+        "MapPublicIpOnLaunch": true,
+        "VpcId": {
+          "Ref": "MineDeployVPC"
+        }
+      }
+    },
+    "MineDeploySubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MineDeployRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "MineDeploySubnet"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "MineDeployVPC": {
+      "Description": "Mine Deploy VPC",
+      "Value": {
+        "Ref": "MineDeployVPC"
+      }
+    },
+    "MineDeploySubnet": {
+      "Description": "Mine Deploy Subnet",
+      "Value": {
+        "Ref": "MineDeploySubnet"
+      }
+    }
+  }
+}
