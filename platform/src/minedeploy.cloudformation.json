@@ -8,6 +8,14 @@
     "AvailabilityZone": {
       "Type": "String",
       "Description": "Availability Zone"
+    },
+    "MineDeployVolumeName": {
+      "Type": "String",
+      "Description": "Unique Volume Name"
+    },
+    "KeyName": {
+      "Type": "String",
+      "Description": "Key Name for EC2 Connection"
     }
   },
   "Resources": {
@@ -30,17 +38,17 @@
           "HostName": {
             "Ref": "HostName"
           },
+          "MineDeployVolumeName": {
+            "Ref": "MineDeployVolumeName"
+          },
+          "KeyName": {
+            "Ref": "KeyName"
+          },
           "MineDeployVPC": {
-            "Fn::GetAtt": [
-              "MinecraftNetworking",
-              "Outputs.MineDeployVPC"
-            ]
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeployVPC"]
           },
           "MineDeploySubnet": {
-            "Fn::GetAtt": [
-              "MinecraftNetworking",
-              "Outputs.MineDeploySubnet"
-            ]
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeploySubnet"]
           },
           "AvailabilityZone": {
             "Ref": "AvailabilityZone"
