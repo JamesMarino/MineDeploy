@@ -47,6 +47,8 @@ aws cloudformation validate-template \
 
 a) Create
 
+**Warning: Package Before Deploying**
+
 ```bash
 aws cloudformation create-stack \
 	--stack-name MineDeploy \
@@ -61,6 +63,8 @@ aws cloudformation create-stack \
 ```
 
 b) Update
+
+**Warning: Package Before Updating**
 
 ```bash
 aws cloudformation update-stack \
