@@ -1,7 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Metadata": {
-  },
+  "Metadata": {},
   "Parameters": {
     "HostName": {
       "Type": "String",
@@ -15,13 +14,27 @@
       "Type": "String",
       "Description": "Mine Deploy ECS Subnet"
     },
+    "MineDeployVolumeName": {
+      "Type": "String",
+      "Description": "Mine Deploy Volume Name"
+    },
+    "KeyName": {
+      "Type": "String",
+      "Description": "Mine Deploy EC2 Box Keys"
+    },
     "AvailabilityZone": {
       "Type": "String",
       "Description": "Availability Zone"
+    },
+    "ECSAMI": {
+      "Description": "ECS-Optimized AMI ID",
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default":
+        "/aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id"
     }
   },
   "Resources": {
-    "MineDeploy": {
+    "MineDeployCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {}
     },
@@ -29,7 +42,7 @@
       "Type": "AWS::ECS::Service",
       "Properties": {
         "Cluster": {
-          "Ref": "MineDeploy"
+          "Ref": "MineDeployCluster"
         },
         "DesiredCount": "1",
         "LaunchType": "EC2",
@@ -48,10 +61,54 @@
               {
                 "Name": "EULA",
                 "Value": "TRUE"
+              },
+              {
+                "Name": "OVERRIDE_SERVER_PROPERTIES",
+                "Value": "TRUE"
+              },
+              {
+                "Name": "SERVER_NAME",
+                "Value": "MyServer"
+              },
+              {
+                "Name": "DIFFICULTY",
+                "Value": "peaceful"
+              },
+              {
+                "Name": "ALLOW_NETHER",
+                "Value": "TRUE"
+              },
+              {
+                "Name": "GENERATE_STRUCTURES",
+                "Value": "TRUE"
+              },
+              {
+                "Name": "SPAWN_ANIMALS",
+                "Value": "TRUE"
+              },
+              {
+                "Name": "SPAWN_NPCS",
+                "Value": "TRUE"
+              },
+              {
+                "Name": "MOTD",
+                "Value": "Message of the Day"
+              },
+              {
+                "Name": "ALLOW_FLIGHT",
+                "Value": "TRUE"
+              },
+              {
+                "Name": "MODE",
+                "Value": "creative"
+              },
+              {
+                "Name": "MEMORY",
+                "Value": "2G"
               }
             ],
             "Image": "itzg/minecraft-server:latest",
-            "Memory": 7975,
+            "Memory": 7977,
             "Name": "MineDeploy",
             "PortMappings": [
               {
@@ -74,13 +131,15 @@
             "MountPoints": [
               {
                 "ContainerPath": "/data",
-                "SourceVolume": "MineDeployVolume"
+                "SourceVolume": {
+                  "Ref": "MineDeployVolumeName"
+                }
               }
             ]
           }
         ],
         "Cpu": 2048,
-        "Memory": 7975,
+        "Memory": 7977,
         "PlacementConstraints": [
           {
             "Type": "memberOf",
@@ -99,7 +158,9 @@
         ],
         "Volumes": [
           {
-            "Name": "MineDeployVolume",
+            "Name": {
+              "Ref": "MineDeployVolumeName"
+            },
             "DockerVolumeConfiguration": {
               "Autoprovision": true,
               "Scope": "shared",
@@ -136,11 +197,9 @@
         "LaunchConfigurationName": {
           "Ref": "MineDeployContainerInstances"
         },
-        "AvailabilityZones": [
-          "ap-southeast-2a"
-        ],
+        "AvailabilityZones": ["ap-southeast-2a"],
         "DesiredCapacity": "1",
-        "MaxSize": "1",
+        "MaxSize": "2",
         "MinSize": "1",
         "VPCZoneIdentifier": [
           {
@@ -182,13 +241,9 @@
             {
               "Effect": "Allow",
               "Principal": {
-                "Service": [
-                  "ec2.amazonaws.com"
-                ]
+                "Service": ["ec2.amazonaws.com"]
               },
-              "Action": [
-                "sts:AssumeRole"
-              ]
+              "Action": ["sts:AssumeRole"]
             }
           ]
         },
@@ -264,8 +319,12 @@
     "MineDeployContainerInstances": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
-        "KeyName": "JamesMarino",
-        "ImageId": "ami-09475847322e5566f",
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "ImageId": {
+          "Ref": "ECSAMI"
+        },
         "InstanceType": "m4.large",
         "IamInstanceProfile": {
           "Ref": "EC2InstanceProfile"
@@ -278,41 +337,99 @@
         "UserData": {
           "Fn::Base64": {
             "Fn::Join": [
-              "",
+              "\n",
               [
-                "#!/bin/bash -xe\n",
-                "echo ECS_CLUSTER=",
+                "#!/bin/bash",
+                "yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm",
+                "yum install -y https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
+                "yum install -y aws-cfn-bootstrap hibagent",
                 {
-                  "Ref": "MineDeploy"
+                  "Fn::Sub":
+                    "/opt/aws/bin/cfn-init -v --region ${AWS::Region} --stack ${AWS::StackName} --resource MineDeployContainerInstances"
                 },
-                ">> /etc/ecs/ecs.config\n",
-                "yum install -y aws-cfn-bootstrap\n",
-                "/opt/aws/bin/cfn-signal -e $? --region ",
                 {
-                  "Ref": "AWS::Region"
+                  "Fn::Sub":
+                    "/opt/aws/bin/cfn-signal -e $? --region ${AWS::Region} --stack ${AWS::StackName} --resource MineDeployAutoScalingGroup"
                 },
-                " --stack ",
+                "/usr/bin/enable-ec2-spot-hibernation",
                 {
-                  "Ref": "AWS::StackName"
-                },
-                " --resource ",
-                {
-                  "Fn::Sub": [
-                    "${ECSAutoScalingGroup} ",
-                    {
-                      "ECSAutoScalingGroup": "MineDeployAutoScalingGroup"
-                    }
-                  ]
-                },
-                "\n",
-                "docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=",
-                {
-                  "Ref": "AWS::Region"
-                },
-                " --grant-all-permissions\n"
+                  "Fn::Sub":
+                    "docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=${AWS::Region} --grant-all-permissions"
+                }
               ]
             ]
           }
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "config": {
+            "packages": {
+              "yum": {
+                "collectd": []
+              }
+            },
+            "commands": {
+              "AddInstanceToCluster": {
+                "command": {
+                  "Fn::Sub":
+                    "echo ECS_CLUSTER=${MineDeployCluster} >> /etc/ecs/ecs.config"
+                }
+              }
+            },
+            "files": {
+              "/etc/cfn/cfn-hup.conf": {
+                "mode": 400,
+                "owner": "root",
+                "group": "root",
+                "content": {
+                  "Fn::Join": [
+                    "\n",
+                    [
+                      "[main]",
+                      {
+                        "Fn::Sub": "stack=${AWS::StackId}"
+                      },
+                      {
+                        "Fn::Sub": "region=${AWS::Region}"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "\n",
+                    [
+                      "[cfn-auto-reloader-hook]",
+                      "triggers=post.update",
+                      "path=Resources.MineDeployContainerInstances.Metadata.AWS::CloudFormation::Init",
+                      {
+                        "Fn::Sub":
+                          "action=/opt/aws/bin/cfn-init -v --region ${AWS::Region} --stack ${AWS::StackName} --resource MineDeployContainerInstances"
+                      }
+                    ]
+                  ]
+                }
+              }
+            },
+            "services": {
+              "sysvinit": {
+                "cfn-hup": {
+                  "enabled": true,
+                  "ensureRunning": true,
+                  "files": [
+                    "/etc/cfn/cfn-hup.conf",
+                    "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "AWS::CloudFormation::Designer": {
+          "id": "59fc3b23-cf72-41fd-ad9b-42ea5ff1783c"
         }
       }
     }
