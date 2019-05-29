@@ -145,6 +145,12 @@
       "Value": {
         "Ref": "MineDeployLoadBalancerTargetGroup"
       }
+    },
+    "MineDeployLoadBalancerURL": {
+      "Description": "Mine Deploy Load Balancer DNS NAME",
+      "Value": {
+        "Fn::GetAtt": ["MineDeployLoadBalancer", "DNSName"]
+      }
     }
   }
 }

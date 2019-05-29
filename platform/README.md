@@ -56,6 +56,7 @@ aws cloudformation create-stack \
 	--parameters ParameterKey=HostName,ParameterValue=example.com \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
 	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
+	             ParameterKey=HostedZoneId,ParameterValue=ABC123 \
 	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=example-loadbalancer \
 	             ParameterKey=KeyName,ParameterValue=JamesMarino \
 	             ParameterKey=ServerName,ParameterValue=MyServer \
@@ -84,6 +85,7 @@ aws cloudformation update-stack \
 	--parameters ParameterKey=HostName,ParameterValue=example.com \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
 	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
+                 ParameterKey=HostedZoneId,ParameterValue=ABC123 \
 	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=example-loadbalancer \
 	             ParameterKey=KeyName,ParameterValue=JamesMarino \
 	             ParameterKey=ServerName,ParameterValue=MyServer \

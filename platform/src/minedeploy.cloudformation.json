@@ -13,6 +13,10 @@
       "Type": "String",
       "Description": "Unique Volume Name"
     },
+    "HostedZoneId": {
+      "Type": "String",
+      "Description": "Hosted Zone Id"
+    },
     "MineDeployLoadBalancerName": {
       "Type": "String",
       "Description": "Unique Load Balancer Name"
@@ -78,6 +82,23 @@
         }
       }
     },
+    "MinecraftDNS": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "./stacks/minecraft.dns.stack.json",
+        "Parameters": {
+          "HostedZoneId": {
+            "Ref": "HostedZoneId"
+          },
+          "HostName": {
+            "Ref": "HostName"
+          },
+          "LoadBalancerURL": {
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeploySubnet"]
+          }
+        }
+      }
+    },
     "MinecraftServices": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
@@ -99,7 +120,10 @@
             "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeploySubnet"]
           },
           "MineDeployLoadBalancerTargetGroup": {
-            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeployLoadBalancerTargetGroup"]
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.MineDeployLoadBalancerTargetGroup"
+            ]
           },
           "AvailabilityZone": {
             "Ref": "AvailabilityZone"

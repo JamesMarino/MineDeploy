@@ -1,0 +1,36 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "HostedZoneId": {
+      "Type": "String",
+      "Description": "Hosted Zone Id"
+    },
+    "HostName": {
+      "Type": "String",
+      "Description": "Host Name"
+    },
+    "LoadBalancerURL": {
+      "Type": "String",
+      "Description": "Host Name"
+    }
+  },
+  "Resources": {
+    "MineDeployDomain": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "HostedZoneId"
+        },
+        "Name": {
+          "Ref": "HostName"
+        },
+        "ResourceRecords": [
+          {
+            "Ref": "LoadBalancerURL"
+          }
+        ],
+        "Type": "A"
+      }
+    }
+  }
+}
