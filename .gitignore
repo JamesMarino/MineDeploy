@@ -1,6 +1,9 @@
 # CloudFormation
 platform/src/minedeploy.deploy.cloudformation.yaml
 
+# Worlds
+worlds/
+
 # Webstorm
 .idea
 
