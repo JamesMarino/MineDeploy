@@ -8,10 +8,3 @@ https://github.com/itzg/dockerfiles/tree/master/minecraft-server
 
 * Backups
 * Scalability
-* Customisation
-
-## Parameters
-
-* Container Environment Variables
-* EC2 Key Name
-* Others

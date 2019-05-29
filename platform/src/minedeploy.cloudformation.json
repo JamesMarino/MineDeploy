@@ -13,9 +13,58 @@
       "Type": "String",
       "Description": "Unique Volume Name"
     },
+    "HostedZoneId": {
+      "Type": "String",
+      "Description": "Hosted Zone Id"
+    },
+    "MineDeployLoadBalancerName": {
+      "Type": "String",
+      "Description": "Unique Load Balancer Name"
+    },
     "KeyName": {
       "Type": "String",
       "Description": "Key Name for EC2 Connection"
+    },
+    "ServerName": {
+      "Type": "String",
+      "Description": "Minecraft Server Name"
+    },
+    "Difficulty": {
+      "Type": "String",
+      "Description": "Minecraft Difficulty"
+    },
+    "AllowNether": {
+      "Type": "String",
+      "Description": "Minecraft Nether"
+    },
+    "GenerateStructures": {
+      "Type": "String",
+      "Description": "Minecraft Generate Structures"
+    },
+    "SpawnAnimals": {
+      "Type": "String",
+      "Description": "Minecraft Spawn Animals"
+    },
+    "SpawnNPCs": {
+      "Type": "String",
+      "Description": "Minecraft Spawn NPCs"
+    },
+    "MessageOfTheDay": {
+      "Type": "String",
+      "Description": "Minecraft Message of the Day"
+    },
+    "AllowFlight": {
+      "Type": "String",
+      "Description": "Minecraft Allow Flight"
+    },
+    "Mode": {
+      "Type": "String",
+      "Description": "Minecraft mode, survival or creative"
+    },
+    "WorldZIPUrl": {
+      "Type": "String",
+      "Description": "Minecraft World File",
+      "Default": ""
     }
   },
   "Resources": {
@@ -26,6 +75,29 @@
         "Parameters": {
           "AvailabilityZone": {
             "Ref": "AvailabilityZone"
+          },
+          "MineDeployLoadBalancerName": {
+            "Ref": "MineDeployLoadBalancerName"
+          }
+        }
+      }
+    },
+    "MinecraftDNS": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "./stacks/minecraft.dns.stack.json",
+        "Parameters": {
+          "HostedZoneId": {
+            "Ref": "HostedZoneId"
+          },
+          "HostName": {
+            "Ref": "HostName"
+          },
+          "LoadBalancerURL": {
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeployLoadBalancerURL"]
+          },
+          "LoadBalancerHostedZoneId": {
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.LoadBalancerHostedZoneId"]
           }
         }
       }
@@ -50,8 +122,44 @@
           "MineDeploySubnet": {
             "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeploySubnet"]
           },
+          "MineDeployLoadBalancerTargetGroup": {
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.MineDeployLoadBalancerTargetGroup"
+            ]
+          },
           "AvailabilityZone": {
             "Ref": "AvailabilityZone"
+          },
+          "ServerName": {
+            "Ref": "ServerName"
+          },
+          "Difficulty": {
+            "Ref": "Difficulty"
+          },
+          "AllowNether": {
+            "Ref": "AllowNether"
+          },
+          "GenerateStructures": {
+            "Ref": "GenerateStructures"
+          },
+          "SpawnAnimals": {
+            "Ref": "SpawnAnimals"
+          },
+          "SpawnNPCs": {
+            "Ref": "SpawnNPCs"
+          },
+          "MessageOfTheDay": {
+            "Ref": "MessageOfTheDay"
+          },
+          "AllowFlight": {
+            "Ref": "AllowFlight"
+          },
+          "Mode": {
+            "Ref": "Mode"
+          },
+          "WorldZIPUrl": {
+            "Ref": "WorldZIPUrl"
           }
         }
       }

@@ -4,6 +4,10 @@
     "AvailabilityZone": {
       "Type": "String",
       "Description": "Availability Zone"
+    },
+    "MineDeployLoadBalancerName": {
+      "Type": "String",
+      "Description": "Load Balancer Name"
     }
   },
   "Resources": {
@@ -71,6 +75,50 @@
           "Ref": "MineDeploySubnet"
         }
       }
+    },
+    "MineDeployLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "IpAddressType": "ipv4",
+        "Scheme": "internet-facing",
+        "Name": {
+          "Ref": "MineDeployLoadBalancerName"
+        },
+        "Subnets": [
+          {
+            "Ref": "MineDeploySubnet"
+          }
+        ],
+        "Type": "network"
+      }
+    },
+    "MineDeployLoadBalancerListener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "MineDeployLoadBalancerTargetGroup"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "MineDeployLoadBalancer"
+        },
+        "Port": 25565,
+        "Protocol": "TCP"
+      }
+    },
+    "MineDeployLoadBalancerTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Port": 25565,
+        "Protocol": "TCP",
+        "VpcId": {
+          "Ref": "MineDeployVPC"
+        }
+      }
     }
   },
   "Outputs": {
@@ -84,6 +132,30 @@
       "Description": "Mine Deploy Subnet",
       "Value": {
         "Ref": "MineDeploySubnet"
+      }
+    },
+    "MineDeployLoadBalancer": {
+      "Description": "Mine Deploy Load Balancer",
+      "Value": {
+        "Ref": "MineDeployLoadBalancer"
+      }
+    },
+    "MineDeployLoadBalancerTargetGroup": {
+      "Description": "Mine Deploy Load Balancer Target Group",
+      "Value": {
+        "Ref": "MineDeployLoadBalancerTargetGroup"
+      }
+    },
+    "MineDeployLoadBalancerURL": {
+      "Description": "Mine Deploy Load Balancer DNS NAME",
+      "Value": {
+        "Fn::GetAtt": ["MineDeployLoadBalancer", "DNSName"]
+      }
+    },
+    "LoadBalancerHostedZoneId": {
+      "Description": "Load Balancer Hosted Zone ID",
+      "Value": {
+        "Fn::GetAtt": ["MineDeployLoadBalancer", "CanonicalHostedZoneID"]
       }
     }
   }
