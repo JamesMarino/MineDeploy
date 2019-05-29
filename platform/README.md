@@ -57,6 +57,16 @@ aws cloudformation create-stack \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
 	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
 	             ParameterKey=KeyName,ParameterValue=JamesMarino \
+	             ParameterKey=ServerName,ParameterValue=MyServer \
+	             ParameterKey=Difficulty,ParameterValue=peaceful \
+	             ParameterKey=AllowNether,ParameterValue=TRUE \
+	             ParameterKey=GenerateStructures,ParameterValue=TRUE \
+	             ParameterKey=SpawnAnimals,ParameterValue=TRUE \
+	             ParameterKey=SpawnNPCs,ParameterValue=TRUE \
+	             ParameterKey=MessageOfTheDay,ParameterValue=Message \
+	             ParameterKey=AllowFlight,ParameterValue=TRUE \
+	             ParameterKey=Mode,ParameterValue=creative \
+	             ParameterKey=WorldZIPUrl,ParameterValue=https://example.com/file.zip \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
 	--region ap-southeast-2
@@ -72,8 +82,18 @@ aws cloudformation update-stack \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
 	--parameters ParameterKey=HostName,ParameterValue=example.com \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
-                 ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
-                 ParameterKey=KeyName,ParameterValue=JamesMarino \
+	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
+	             ParameterKey=KeyName,ParameterValue=JamesMarino \
+	             ParameterKey=ServerName,ParameterValue=MyServer \
+	             ParameterKey=Difficulty,ParameterValue=peaceful \
+	             ParameterKey=AllowNether,ParameterValue=TRUE \
+	             ParameterKey=GenerateStructures,ParameterValue=TRUE \
+	             ParameterKey=SpawnAnimals,ParameterValue=TRUE \
+	             ParameterKey=SpawnNPCs,ParameterValue=TRUE \
+	             ParameterKey=MessageOfTheDay,ParameterValue=Message \
+	             ParameterKey=AllowFlight,ParameterValue=TRUE \
+	             ParameterKey=Mode,ParameterValue=creative \
+	             ParameterKey=WorldZIPUrl,ParameterValue=https://example.com/file.zip \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
 	--region ap-southeast-2

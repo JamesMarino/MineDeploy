@@ -31,6 +31,47 @@
       "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
       "Default":
         "/aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id"
+    },
+    "ServerName": {
+      "Type": "String",
+      "Description": "Minecraft Server Name"
+    },
+    "Difficulty": {
+      "Type": "String",
+      "Description": "Minecraft Difficulty"
+    },
+    "AllowNether": {
+      "Type": "String",
+      "Description": "Minecraft Nether"
+    },
+    "GenerateStructures": {
+      "Type": "String",
+      "Description": "Minecraft Generate Structures"
+    },
+    "SpawnAnimals": {
+      "Type": "String",
+      "Description": "Minecraft Spawn Animals"
+    },
+    "SpawnNPCs": {
+      "Type": "String",
+      "Description": "Minecraft Spawn NPCs"
+    },
+    "MessageOfTheDay": {
+      "Type": "String",
+      "Description": "Minecraft Message of the Day"
+    },
+    "AllowFlight": {
+      "Type": "String",
+      "Description": "Minecraft Allow Flight"
+    },
+    "Mode": {
+      "Type": "String",
+      "Description": "Minecraft mode, survival or creative"
+    },
+    "WorldZIPUrl": {
+      "Type": "String",
+      "Description": "Minecraft World File",
+      "Default": ""
     }
   },
   "Resources": {
@@ -67,44 +108,68 @@
                 "Value": "TRUE"
               },
               {
+                "Name": "MEMORY",
+                "Value": "2G"
+              },
+              {
                 "Name": "SERVER_NAME",
-                "Value": "MyServer"
+                "Value": {
+                  "Ref": "ServerName"
+                }
               },
               {
                 "Name": "DIFFICULTY",
-                "Value": "peaceful"
+                "Value": {
+                  "Ref": "Difficulty"
+                }
               },
               {
                 "Name": "ALLOW_NETHER",
-                "Value": "TRUE"
+                "Value": {
+                  "Ref": "AllowNether"
+                }
               },
               {
                 "Name": "GENERATE_STRUCTURES",
-                "Value": "TRUE"
+                "Value": {
+                  "Ref": "GenerateStructures"
+                }
               },
               {
                 "Name": "SPAWN_ANIMALS",
-                "Value": "TRUE"
+                "Value": {
+                  "Ref": "SpawnAnimals"
+                }
               },
               {
                 "Name": "SPAWN_NPCS",
-                "Value": "TRUE"
+                "Value": {
+                  "Ref": "SpawnNPCs"
+                }
               },
               {
                 "Name": "MOTD",
-                "Value": "Message of the Day"
+                "Value": {
+                  "Ref": "MessageOfTheDay"
+                }
               },
               {
                 "Name": "ALLOW_FLIGHT",
-                "Value": "TRUE"
+                "Value": {
+                  "Ref": "AllowFlight"
+                }
               },
               {
                 "Name": "MODE",
-                "Value": "creative"
+                "Value": {
+                  "Ref": "Mode"
+                }
               },
               {
-                "Name": "MEMORY",
-                "Value": "2G"
+                "Name": "WORLD",
+                "Value": {
+                  "Ref": "WorldZIPUrl"
+                }
               }
             ],
             "Image": "itzg/minecraft-server:latest",
