@@ -11,24 +11,32 @@
     },
     "LoadBalancerURL": {
       "Type": "String",
-      "Description": "Host Name"
+      "Description": "Load Balancer URL"
+    },
+    "LoadBalancerHostedZoneId": {
+      "Type": "String",
+      "Description": "Load Balancer Host Zone ID"
     }
   },
   "Resources": {
     "MineDeployDomain": {
       "Type": "AWS::Route53::RecordSet",
       "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Ref": "LoadBalancerURL"
+          },
+          "EvaluateTargetHealth": false,
+          "HostedZoneId": {
+            "Ref": "LoadBalancerHostedZoneId"
+          }
+        },
         "HostedZoneId": {
           "Ref": "HostedZoneId"
         },
         "Name": {
           "Ref": "HostName"
         },
-        "ResourceRecords": [
-          {
-            "Ref": "LoadBalancerURL"
-          }
-        ],
         "Type": "A"
       }
     }

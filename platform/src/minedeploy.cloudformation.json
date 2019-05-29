@@ -94,7 +94,10 @@
             "Ref": "HostName"
           },
           "LoadBalancerURL": {
-            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeploySubnet"]
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeployLoadBalancerURL"]
+          },
+          "LoadBalancerHostedZoneId": {
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.LoadBalancerHostedZoneId"]
           }
         }
       }

@@ -151,6 +151,12 @@
       "Value": {
         "Fn::GetAtt": ["MineDeployLoadBalancer", "DNSName"]
       }
+    },
+    "LoadBalancerHostedZoneId": {
+      "Description": "Load Balancer Hosted Zone ID",
+      "Value": {
+        "Fn::GetAtt": ["MineDeployLoadBalancer", "CanonicalHostedZoneID"]
+      }
     }
   }
 }
