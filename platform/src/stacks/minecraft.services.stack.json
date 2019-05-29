@@ -10,6 +10,10 @@
       "Type": "String",
       "Description": "Mine Deploy ECS VPC"
     },
+    "MineDeployLoadBalancerTargetGroup": {
+      "Type": "String",
+      "Description": "Mine Deploy Load Balancer Name"
+    },
     "MineDeploySubnet": {
       "Type": "String",
       "Description": "Mine Deploy ECS Subnet"
@@ -89,7 +93,16 @@
         "LaunchType": "EC2",
         "TaskDefinition": {
           "Ref": "MineDeployTaskDefinition"
-        }
+        },
+        "LoadBalancers": [
+          {
+            "ContainerName": "MineDeploy",
+            "ContainerPort": 25565,
+            "TargetGroupArn": {
+              "Ref": "MineDeployLoadBalancerTargetGroup"
+            }
+          }
+        ]
       }
     },
     "MineDeployTaskDefinition": {

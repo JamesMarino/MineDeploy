@@ -13,6 +13,10 @@
       "Type": "String",
       "Description": "Unique Volume Name"
     },
+    "MineDeployLoadBalancerName": {
+      "Type": "String",
+      "Description": "Unique Load Balancer Name"
+    },
     "KeyName": {
       "Type": "String",
       "Description": "Key Name for EC2 Connection"
@@ -67,6 +71,9 @@
         "Parameters": {
           "AvailabilityZone": {
             "Ref": "AvailabilityZone"
+          },
+          "MineDeployLoadBalancerName": {
+            "Ref": "MineDeployLoadBalancerName"
           }
         }
       }
@@ -90,6 +97,9 @@
           },
           "MineDeploySubnet": {
             "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeploySubnet"]
+          },
+          "MineDeployLoadBalancerTargetGroup": {
+            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeployLoadBalancerTargetGroup"]
           },
           "AvailabilityZone": {
             "Ref": "AvailabilityZone"
