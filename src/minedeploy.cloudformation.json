@@ -61,6 +61,14 @@
       "Type": "String",
       "Description": "Minecraft mode, survival or creative"
     },
+    "EnableCommandBlocks": {
+      "Type": "String",
+      "Description": "Enable Command Blocks"
+    },
+    "AdminPlayers": {
+      "Type": "String",
+      "Description": "Admin Players in Comma Separated String"
+    },
     "WorldZIPUrl": {
       "Type": "String",
       "Description": "Minecraft World File",
@@ -94,10 +102,16 @@
             "Ref": "HostName"
           },
           "LoadBalancerURL": {
-            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.MineDeployLoadBalancerURL"]
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.MineDeployLoadBalancerURL"
+            ]
           },
           "LoadBalancerHostedZoneId": {
-            "Fn::GetAtt": ["MinecraftNetworking", "Outputs.LoadBalancerHostedZoneId"]
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.LoadBalancerHostedZoneId"
+            ]
           }
         }
       }
@@ -155,8 +169,14 @@
           "AllowFlight": {
             "Ref": "AllowFlight"
           },
+          "EnableCommandBlocks": {
+            "Ref": "EnableCommandBlocks"
+          },
           "Mode": {
             "Ref": "Mode"
+          },
+          "AdminPlayers": {
+            "Ref": "AdminPlayers"
           },
           "WorldZIPUrl": {
             "Ref": "WorldZIPUrl"

@@ -68,9 +68,17 @@
       "Type": "String",
       "Description": "Minecraft Allow Flight"
     },
+    "EnableCommandBlocks": {
+      "Type": "String",
+      "Description": "Enable Command Blocks"
+    },
     "Mode": {
       "Type": "String",
       "Description": "Minecraft mode, survival or creative"
+    },
+    "AdminPlayers": {
+      "Type": "String",
+      "Description": "Admin Players"
     },
     "WorldZIPUrl": {
       "Type": "String",
@@ -176,6 +184,18 @@
                 "Name": "MODE",
                 "Value": {
                   "Ref": "Mode"
+                }
+              },
+              {
+                "Name": "ENABLE_COMMAND_BLOCK",
+                "Value": {
+                  "Ref": "EnableCommandBlocks"
+                }
+              },
+              {
+                "Name": "OPS",
+                "Value": {
+                  "Ref": "AdminPlayers"
                 }
               },
               {

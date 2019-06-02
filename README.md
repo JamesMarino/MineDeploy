@@ -38,23 +38,25 @@ a) Create
 
 ```bash
 aws cloudformation create-stack \
-	--stack-name MineDeploy \
+	--stack-name MineDeploy-Minecraft \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
-	--parameters ParameterKey=HostName,ParameterValue=example.com \
+	--parameters ParameterKey=HostName,ParameterValue=MineDeploy.example.com \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
-	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
-	             ParameterKey=HostedZoneId,ParameterValue=ABC123 \
-	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=example-loadbalancer \
-	             ParameterKey=KeyName,ParameterValue=JamesMarino \
-	             ParameterKey=ServerName,ParameterValue=MyServer \
-	             ParameterKey=Difficulty,ParameterValue=peaceful \
+	             ParameterKey=MineDeployVolumeName,ParameterValue=MineDeployMinecraftVolume \
+	             ParameterKey=HostedZoneId,ParameterValue=Z2W447I3OZ6EAE \
+	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=minedeploy-loadbalancer \
+	             ParameterKey=KeyName,ParameterValue=KeyName \
+	             ParameterKey=ServerName,ParameterValue=ServerName \
+	             ParameterKey=Difficulty,ParameterValue=normal \
 	             ParameterKey=AllowNether,ParameterValue=TRUE \
 	             ParameterKey=GenerateStructures,ParameterValue=TRUE \
 	             ParameterKey=SpawnAnimals,ParameterValue=TRUE \
 	             ParameterKey=SpawnNPCs,ParameterValue=TRUE \
-	             ParameterKey=MessageOfTheDay,ParameterValue=Message \
+	             ParameterKey=MessageOfTheDay,ParameterValue="Server Message of the Day" \
 	             ParameterKey=AllowFlight,ParameterValue=TRUE \
-	             ParameterKey=Mode,ParameterValue=creative \
+	             ParameterKey=EnableCommandBlocks,ParameterValue=TRUE \
+	             ParameterKey=Mode,ParameterValue=survival \
+	             ParameterKey=AdminPlayers,ParameterValue=UserName \
 	             ParameterKey=WorldZIPUrl,ParameterValue=https://example.com/file.zip \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
@@ -69,21 +71,23 @@ b) Update
 aws cloudformation update-stack \
 	--stack-name MineDeploy \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
-	--parameters ParameterKey=HostName,ParameterValue=example.com \
+	--parameters ParameterKey=HostName,ParameterValue=MineDeploy.example.com \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
-	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleVolumeName \
-                 ParameterKey=HostedZoneId,ParameterValue=ABC123 \
-	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=example-loadbalancer \
-	             ParameterKey=KeyName,ParameterValue=JamesMarino \
-	             ParameterKey=ServerName,ParameterValue=MyServer \
-	             ParameterKey=Difficulty,ParameterValue=peaceful \
+	             ParameterKey=MineDeployVolumeName,ParameterValue=MineDeployMinecraftVolume \
+	             ParameterKey=HostedZoneId,ParameterValue=Z2W447I3OZ6EAE \
+	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=minedeploy-loadbalancer \
+	             ParameterKey=KeyName,ParameterValue=KeyName \
+	             ParameterKey=ServerName,ParameterValue=ServerName \
+	             ParameterKey=Difficulty,ParameterValue=normal \
 	             ParameterKey=AllowNether,ParameterValue=TRUE \
 	             ParameterKey=GenerateStructures,ParameterValue=TRUE \
 	             ParameterKey=SpawnAnimals,ParameterValue=TRUE \
 	             ParameterKey=SpawnNPCs,ParameterValue=TRUE \
-	             ParameterKey=MessageOfTheDay,ParameterValue=Message \
+	             ParameterKey=MessageOfTheDay,ParameterValue="Server Message of the Day" \
 	             ParameterKey=AllowFlight,ParameterValue=TRUE \
-	             ParameterKey=Mode,ParameterValue=creative \
+	             ParameterKey=EnableCommandBlocks,ParameterValue=TRUE \
+	             ParameterKey=Mode,ParameterValue=survival \
+	             ParameterKey=AdminPlayers,ParameterValue=UserName \
 	             ParameterKey=WorldZIPUrl,ParameterValue=https://example.com/file.zip \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
