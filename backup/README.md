@@ -12,8 +12,8 @@ docker run \
     --env S3_BUCKET_NAME=test-backups-bucket \
     --env AWS_ACCESS_KEY_ID=AKIA123 \
     --env AWS_SECRET_ACCESS_KEY=qwerty \
-    --volume TestVolume:/data \
-    mine-deploy-backup:latest
+    --volume test-volume:/data \
+    minedeploy/backup:latest
 ```
 
 ## Testing Using Volume on Amazon EC2
