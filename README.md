@@ -11,6 +11,8 @@ to Reserved CPU and Memory allocation at it's maximum.
 
 ## Deployment
 
+For the following `cd platform`
+
 1.  Package
 
 ```bash
