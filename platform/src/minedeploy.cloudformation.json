@@ -5,6 +5,10 @@
       "Type": "String",
       "Description": "Hostname"
     },
+    "EnvironmentName": {
+      "Type": "String",
+      "Description": "Environment Name"
+    },
     "AvailabilityZone": {
       "Type": "String",
       "Description": "Availability Zone"
@@ -123,6 +127,9 @@
         "Parameters": {
           "HostName": {
             "Ref": "HostName"
+          },
+          "EnvironmentName": {
+            "Ref": "EnvironmentName"
           },
           "MineDeployVolumeName": {
             "Ref": "MineDeployVolumeName"

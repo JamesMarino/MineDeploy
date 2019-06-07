@@ -6,6 +6,10 @@
       "Type": "String",
       "Description": "Hostname such as example.com"
     },
+    "EnvironmentName": {
+      "Type": "String",
+      "Description": "Environment Name"
+    },
     "MineDeployVPC": {
       "Type": "String",
       "Description": "Mine Deploy ECS VPC"
@@ -118,7 +122,6 @@
       "Properties": {
         "ContainerDefinitions": [
           {
-            "Cpu": 2048,
             "Environment": [
               {
                 "Name": "EULA",
@@ -206,7 +209,8 @@
               }
             ],
             "Image": "itzg/minecraft-server:latest",
-            "Memory": 7977,
+            "Cpu": 1920,
+            "Memory": 7721,
             "Name": "MineDeploy",
             "PortMappings": [
               {
@@ -236,8 +240,8 @@
             ]
           }
         ],
-        "Cpu": 2048,
-        "Memory": 7977,
+        "Cpu": 1920,
+        "Memory": 7721,
         "PlacementConstraints": [
           {
             "Type": "memberOf",
@@ -275,7 +279,7 @@
     "BackupBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "AccessControl": "public-read"
+        "AccessControl": "PublicRead"
       }
     },
     "MineDeployBackupTaskDefinition": {
@@ -283,12 +287,11 @@
       "Properties": {
         "ContainerDefinitions": [
           {
-            "Cpu": 128,
             "Environment": [
               {
                 "Name": "INSTANCE_NAME",
                 "Value": {
-                  "Ref": "ServerName"
+                  "Ref": "EnvironmentName"
                 }
               },
               {
@@ -296,9 +299,28 @@
                 "Value": {
                   "Ref": "BackupBucket"
                 }
+              },
+              {
+                "Name": "EBS_VOLUME_NAME",
+                "Value": {
+                  "Ref": "MineDeployVolumeName"
+                }
+              },
+              {
+                "Name": "AWS_REGION",
+                "Value": {
+                  "Ref": "AWS::Region"
+                }
+              },
+              {
+                "Name": "AWS_AZ",
+                "Value": {
+                  "Ref": "AvailabilityZone"
+                }
               }
             ],
             "Image": "minedeploy/backup:latest",
+            "Cpu": 128,
             "Memory": 256,
             "Name": "MineDeployBackup",
             "LogConfiguration": {
@@ -315,10 +337,12 @@
             },
             "MountPoints": [
               {
-                "ContainerPath": "/data",
-                "SourceVolume": {
-                  "Ref": "MineDeployVolumeName"
-                }
+                "SourceVolume": "TempVolume",
+                "ContainerPath": "/root/backup"
+              },
+              {
+                "SourceVolume": "DockerSocket",
+                "ContainerPath": "/var/run/docker.sock"
               }
             ]
           }
@@ -343,18 +367,16 @@
         ],
         "Volumes": [
           {
-            "Name": {
-              "Ref": "MineDeployVolumeName"
+            "Host": {
+              "SourcePath": "/root/backup"
             },
-            "DockerVolumeConfiguration": {
-              "Autoprovision": true,
-              "Scope": "shared",
-              "Driver": "rexray/ebs",
-              "DriverOpts": {
-                "volumetype": "gp2",
-                "size": "5"
-              }
-            }
+            "Name": "TempVolume"
+          },
+          {
+            "Host": {
+              "SourcePath": "/var/run/docker.sock"
+            },
+            "Name": "DockerSocket"
           }
         ]
       }
@@ -374,7 +396,7 @@
           ]
         },
         "Description": "Minecraft data backup every hour",
-        "ScheduleExpression": "cron(0 * * * *)",
+        "ScheduleExpression": "rate(1 hour)",
         "State": "ENABLED",
         "Targets": [
           {
