@@ -223,7 +223,7 @@
                 "awslogs-region": {
                   "Ref": "AWS::Region"
                 },
-                "awslogs-stream-prefix": "MineDeploy"
+                "awslogs-stream-prefix": "MineService"
               }
             },
             "MountPoints": [
@@ -272,6 +272,139 @@
         ]
       }
     },
+    "BackupBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "public-read"
+      }
+    },
+    "MineDeployBackupTaskDefinition": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Cpu": 128,
+            "Environment": [
+              {
+                "Name": "INSTANCE_NAME",
+                "Value": {
+                  "Ref": "ServerName"
+                }
+              },
+              {
+                "Name": "S3_BUCKET_NAME",
+                "Value": {
+                  "Ref": "BackupBucket"
+                }
+              }
+            ],
+            "Image": "minedeploy/backup:latest",
+            "Memory": 256,
+            "Name": "MineDeployBackup",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "MineDeployLogGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "BackupService"
+              }
+            },
+            "MountPoints": [
+              {
+                "ContainerPath": "/data",
+                "SourceVolume": {
+                  "Ref": "MineDeployVolumeName"
+                }
+              }
+            ]
+          }
+        ],
+        "Cpu": 128,
+        "Memory": 256,
+        "PlacementConstraints": [
+          {
+            "Type": "memberOf",
+            "Expression": {
+              "Fn::Join": [
+                "",
+                [
+                  "attribute:ecs.availability-zone==",
+                  {
+                    "Ref": "AvailabilityZone"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Volumes": [
+          {
+            "Name": {
+              "Ref": "MineDeployVolumeName"
+            },
+            "DockerVolumeConfiguration": {
+              "Autoprovision": true,
+              "Scope": "shared",
+              "Driver": "rexray/ebs",
+              "DriverOpts": {
+                "volumetype": "gp2",
+                "size": "5"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "TaskSchedule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": {
+          "Fn::Join": [
+            "-",
+            [
+              "mine-deploy-backup-rule",
+              {
+                "Ref": "HostName"
+              }
+            ]
+          ]
+        },
+        "Description": "Minecraft data backup every hour",
+        "ScheduleExpression": "cron(0 * * * *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": ["MineDeployCluster", "Arn"]
+            },
+            "Id": {
+              "Fn::Join": [
+                "-",
+                [
+                  "mine-deploy-backup-rule",
+                  {
+                    "Ref": "HostName"
+                  }
+                ]
+              ]
+            },
+            "RoleArn": {
+              "Fn::GetAtt": ["TaskSchedulerRole", "Arn"]
+            },
+            "EcsParameters": {
+              "TaskDefinitionArn": {
+                "Ref": "MineDeployBackupTaskDefinition"
+              },
+              "TaskCount": 1
+            }
+          }
+        ]
+      }
+    },
     "MineDeployLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -279,7 +412,7 @@
           "Fn::Join": [
             "-",
             [
-              "MineDeployLogGroup",
+              "MineDeploy",
               {
                 "Ref": "HostName"
               }
@@ -331,6 +464,42 @@
         ]
       }
     },
+    "TaskSchedulerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["events.amazonaws.com"]
+              },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "mine-deploy-task-scheduler-policy",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ecs:RunTask",
+                    "iam:ListInstanceProfiles",
+                    "iam:ListRoles",
+                    "iam:PassRole"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "EC2Role": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -362,7 +531,8 @@
                     "ecs:StartTelemetrySession",
                     "ecs:Submit*",
                     "logs:CreateLogStream",
-                    "logs:PutLogEvents"
+                    "logs:PutLogEvents",
+                    "s3:*"
                   ],
                   "Resource": "*"
                 }
