@@ -1,13 +1,9 @@
-# Mine Deploy
+# Platform
 
-CloudFormation Stack Minecraft Server Deployment on ECS.
+Notes:
 
-Easy and quick way to get Minecraft running on AWS.
-
-## Notes
-
-When updating the CloudFormation stack set desired instances to 2 in AutoScaling due
-to Reserved CPU and Memory allocation at it's maximum.
+* When updating the CloudFormation stack set desired instances to 2 in AutoScaling due
+  to Reserved CPU and Memory allocation at it's maximum.
 
 ## Deployment
 

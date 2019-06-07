@@ -22,7 +22,7 @@ docker run \
 
 ## Testing Using Volume on Amazon EC2
 
-1. Spin up a `t1.nano` with `SSH Access` Jump Box
+1.  Spin up a `t1.nano` with `SSH Access` Jump Box
 
 ### Install Docker Amazon Linux
 
