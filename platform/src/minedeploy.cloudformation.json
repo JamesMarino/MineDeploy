@@ -73,6 +73,10 @@
       "Type": "String",
       "Description": "Admin Players in Comma Separated String"
     },
+    "AlarmMobileNumber": {
+      "Type": "String",
+      "Description": "Alarm Notification Mobile Number"
+    },
     "WorldZIPUrl": {
       "Type": "String",
       "Description": "Minecraft World File",
@@ -116,6 +120,9 @@
               "MinecraftNetworking",
               "Outputs.LoadBalancerHostedZoneId"
             ]
+          },
+          "AlarmMobileNumber": {
+            "Ref": "AlarmMobileNumber"
           }
         }
       }
