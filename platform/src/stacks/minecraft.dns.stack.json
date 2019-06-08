@@ -16,6 +16,10 @@
     "LoadBalancerHostedZoneId": {
       "Type": "String",
       "Description": "Load Balancer Host Zone ID"
+    },
+    "AlarmMobileNumber": {
+      "Type": "String",
+      "Description": "Alarm Notification Mobile Number"
     }
   },
   "Resources": {
@@ -58,6 +62,51 @@
             "Value": {
               "Ref": "HostName"
             }
+          }
+        ]
+      }
+    },
+    "MineDeployHealthCheckAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "MineDeployNotificationTopic"
+          }
+        ],
+        "AlarmDescription": "MineDeployHealthCheckAlarm",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "HealthCheckId",
+            "Value": "MineDeployHealthCheck"
+          }
+        ],
+        "EvaluationPeriods": 3,
+        "MetricName": "HealthCheckStatus",
+        "Namespace": "AWS/Route53",
+        "OKActions": [
+          {
+            "Ref": "MineDeployNotificationTopic"
+          }
+        ],
+        "Period": 60,
+        "Statistic": "Minimum",
+        "Threshold": 1.0,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "MineDeployNotificationTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": "MineDeployNotificationTopi1c",
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Ref": "AlarmMobileNumber"
+            },
+            "Protocol": "sms"
           }
         ]
       }

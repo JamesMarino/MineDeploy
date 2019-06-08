@@ -56,6 +56,7 @@ aws cloudformation create-stack \
 	             ParameterKey=EnableCommandBlocks,ParameterValue=TRUE \
 	             ParameterKey=Mode,ParameterValue=survival \
 	             ParameterKey=AdminPlayers,ParameterValue=ExampleUser \
+                 ParameterKey=AlarmMobileNumber,ParameterValue=+61499999999 \
 	             ParameterKey=WorldZIPUrl,ParameterValue= \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
@@ -70,24 +71,25 @@ b) Update
 aws cloudformation update-stack \
 	--stack-name Bruh-Minecraft \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
-	--parameters ParameterKey=HostName,ParameterValue=bruh.chadmine.com \
-                 ParameterKey=EnvironmentName,ParameterValue=bruh \
+	--parameters ParameterKey=HostName,ParameterValue=example.com \
+                 ParameterKey=EnvironmentName,ParameterValue=test \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
-	             ParameterKey=MineDeployVolumeName,ParameterValue=BruhMinecraftVolume \
+	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleMinecraftVolume \
 	             ParameterKey=HostedZoneId,ParameterValue=Z2W447I3OZ6EAE \
-	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=bruh-loadbalancer \
-	             ParameterKey=KeyName,ParameterValue=JamesMarino \
-	             ParameterKey=ServerName,ParameterValue="Bruh Mine" \
+	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=example-loadbalancer \
+	             ParameterKey=KeyName,ParameterValue=ExampleKey \
+	             ParameterKey=ServerName,ParameterValue="Example Name" \
 	             ParameterKey=Difficulty,ParameterValue=normal \
 	             ParameterKey=AllowNether,ParameterValue=TRUE \
 	             ParameterKey=GenerateStructures,ParameterValue=TRUE \
 	             ParameterKey=SpawnAnimals,ParameterValue=TRUE \
 	             ParameterKey=SpawnNPCs,ParameterValue=TRUE \
-	             ParameterKey=MessageOfTheDay,ParameterValue="Welcome to Bruh Mine" \
+	             ParameterKey=MessageOfTheDay,ParameterValue="Server Message of the Day" \
 	             ParameterKey=AllowFlight,ParameterValue=TRUE \
 	             ParameterKey=EnableCommandBlocks,ParameterValue=TRUE \
 	             ParameterKey=Mode,ParameterValue=survival \
-	             ParameterKey=AdminPlayers,ParameterValue=KebabStand \
+	             ParameterKey=AdminPlayers,ParameterValue=ExampleUser \
+                 ParameterKey=AlarmMobileNumber,ParameterValue=+61499999999 \
 	             ParameterKey=WorldZIPUrl,ParameterValue= \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
