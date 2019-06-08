@@ -282,6 +282,38 @@
         "AccessControl": "PublicRead"
       }
     },
+    "ReadBucket": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "BackupBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["s3:GetObject"],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:s3:::${BackupBucket}/*"
+              },
+              "Principal": {
+                "AWS": "*"
+              }
+            },
+            {
+              "Action": ["s3:ListBucket"],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:s3:::${BackupBucket}"
+              },
+              "Principal": {
+                "AWS": "*"
+              }
+            }
+          ]
+        }
+      }
+    },
     "MineDeployBackupTaskDefinition": {
       "Type": "AWS::ECS::TaskDefinition",
       "Properties": {
