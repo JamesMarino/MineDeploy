@@ -39,6 +39,28 @@
         },
         "Type": "A"
       }
+    },
+    "MineDeployHealthCheck": {
+      "Type": "AWS::Route53::HealthCheck",
+      "Properties": {
+        "HealthCheckConfig": {
+          "Port": "25565",
+          "Type": "TCP",
+          "FullyQualifiedDomainName": {
+            "Ref": "HostName"
+          },
+          "RequestInterval": "30",
+          "FailureThreshold": "3"
+        },
+        "HealthCheckTags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Ref": "HostName"
+            }
+          }
+        ]
+      }
     }
   }
 }

@@ -68,26 +68,26 @@ b) Update
 
 ```bash
 aws cloudformation update-stack \
-	--stack-name Example-Minecraft \
+	--stack-name Bruh-Minecraft \
 	--template-body file://./src/minedeploy.deploy.cloudformation.yaml \
-	--parameters ParameterKey=HostName,ParameterValue=example.com \
-                 ParameterKey=EnvironmentName,ParameterValue=test \
+	--parameters ParameterKey=HostName,ParameterValue=bruh.chadmine.com \
+                 ParameterKey=EnvironmentName,ParameterValue=bruh \
 	             ParameterKey=AvailabilityZone,ParameterValue=ap-southeast-2a \
-	             ParameterKey=MineDeployVolumeName,ParameterValue=ExampleMinecraftVolume \
+	             ParameterKey=MineDeployVolumeName,ParameterValue=BruhMinecraftVolume \
 	             ParameterKey=HostedZoneId,ParameterValue=Z2W447I3OZ6EAE \
-	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=example-loadbalancer \
-	             ParameterKey=KeyName,ParameterValue=ExampleKey \
-	             ParameterKey=ServerName,ParameterValue="Example Name" \
+	             ParameterKey=MineDeployLoadBalancerName,ParameterValue=bruh-loadbalancer \
+	             ParameterKey=KeyName,ParameterValue=JamesMarino \
+	             ParameterKey=ServerName,ParameterValue="Bruh Mine" \
 	             ParameterKey=Difficulty,ParameterValue=normal \
 	             ParameterKey=AllowNether,ParameterValue=TRUE \
 	             ParameterKey=GenerateStructures,ParameterValue=TRUE \
 	             ParameterKey=SpawnAnimals,ParameterValue=TRUE \
 	             ParameterKey=SpawnNPCs,ParameterValue=TRUE \
-	             ParameterKey=MessageOfTheDay,ParameterValue="Server Message of the Day" \
+	             ParameterKey=MessageOfTheDay,ParameterValue="Welcome to Bruh Mine" \
 	             ParameterKey=AllowFlight,ParameterValue=TRUE \
 	             ParameterKey=EnableCommandBlocks,ParameterValue=TRUE \
 	             ParameterKey=Mode,ParameterValue=survival \
-	             ParameterKey=AdminPlayers,ParameterValue=ExampleUser \
+	             ParameterKey=AdminPlayers,ParameterValue=KebabStand \
 	             ParameterKey=WorldZIPUrl,ParameterValue= \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
