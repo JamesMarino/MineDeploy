@@ -80,7 +80,9 @@
         "Dimensions": [
           {
             "Name": "HealthCheckId",
-            "Value": "MineDeployHealthCheck"
+            "Value": {
+              "Ref": "MineDeployHealthCheck"
+            }
           }
         ],
         "EvaluationPeriods": 3,
@@ -91,7 +93,7 @@
             "Ref": "MineDeployNotificationTopic"
           }
         ],
-        "Period": 60,
+        "Period": 120,
         "Statistic": "Minimum",
         "Threshold": 1.0,
         "TreatMissingData": "notBreaching"
