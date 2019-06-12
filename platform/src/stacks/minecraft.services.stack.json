@@ -88,6 +88,10 @@
       "Type": "String",
       "Description": "Minecraft World File",
       "Default": ""
+    },
+    "MemoryLimit": {
+      "Type": "String",
+      "Description": "Hard Memory Limit for Java"
     }
   },
   "Resources": {
@@ -133,7 +137,9 @@
               },
               {
                 "Name": "MEMORY",
-                "Value": "2G"
+                "Value": {
+                  "Ref": "MemoryLimit"
+                }
               },
               {
                 "Name": "SERVER_NAME",
@@ -279,7 +285,15 @@
     "BackupBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "AccessControl": "PublicRead"
+        "AccessControl": "PublicRead",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "ExpirationInDays": 3,
+              "Status": "Enabled"
+            }
+          ]
+        }
       }
     },
     "ReadBucket": {
@@ -753,6 +767,20 @@
         "AWS::CloudFormation::Designer": {
           "id": "59fc3b23-cf72-41fd-ad9b-42ea5ff1783c"
         }
+      }
+    }
+  },
+  "Outputs": {
+    "MineDeployCluster": {
+      "Description": "Mine Deploy Cluster",
+      "Value": {
+        "Ref": "MineDeployCluster"
+      }
+    },
+    "MineDeployBackupBucket": {
+      "Description": "Mine Deploy Backup Bucket",
+      "Value": {
+        "Ref": "BackupBucket"
       }
     }
   }

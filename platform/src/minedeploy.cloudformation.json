@@ -81,6 +81,10 @@
       "Type": "String",
       "Description": "Minecraft World File",
       "Default": ""
+    },
+    "MemoryLimit": {
+      "Type": "String",
+      "Description": "Hard Memory Limit for Java"
     }
   },
   "Resources": {
@@ -194,6 +198,35 @@
           },
           "WorldZIPUrl": {
             "Ref": "WorldZIPUrl"
+          },
+          "MemoryLimit": {
+            "Ref": "MemoryLimit"
+          }
+        }
+      }
+    },
+    "MineDeployDashboard": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "./stacks/minecraft.dashboard.stack.json",
+        "Parameters": {
+          "ServerName": {
+            "Ref": "ServerName"
+          },
+          "ClusterName": {
+            "Fn::GetAtt": ["MinecraftServices", "Outputs.MineDeployCluster"]
+          },
+          "BackupBucketName": {
+            "Fn::GetAtt": [
+              "MinecraftServices",
+              "Outputs.MineDeployBackupBucket"
+            ]
+          },
+          "LoadBalancerName": {
+            "Fn::GetAtt": [
+              "MinecraftNetworking",
+              "Outputs.MineDeployLoadBalancerName"
+            ]
           }
         }
       }
