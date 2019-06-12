@@ -58,6 +58,7 @@ aws cloudformation create-stack \
 	             ParameterKey=AdminPlayers,ParameterValue=ExampleUser \
                  ParameterKey=AlarmMobileNumber,ParameterValue=+61499999999 \
 	             ParameterKey=WorldZIPUrl,ParameterValue= \
+                 ParameterKey=MemoryLimit,ParameterValue=7G \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
 	--region ap-southeast-2
@@ -91,6 +92,7 @@ aws cloudformation update-stack \
 	             ParameterKey=AdminPlayers,ParameterValue=ExampleUser \
                  ParameterKey=AlarmMobileNumber,ParameterValue=+61499999999 \
 	             ParameterKey=WorldZIPUrl,ParameterValue= \
+	             ParameterKey=MemoryLimit,ParameterValue=7G \
 	--capabilities CAPABILITY_IAM \
 	--profile default \
 	--region ap-southeast-2

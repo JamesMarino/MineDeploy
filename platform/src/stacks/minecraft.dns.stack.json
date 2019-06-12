@@ -85,7 +85,7 @@
             }
           }
         ],
-        "EvaluationPeriods": 3,
+        "EvaluationPeriods": 2,
         "MetricName": "HealthCheckStatus",
         "Namespace": "AWS/Route53",
         "OKActions": [
@@ -93,7 +93,7 @@
             "Ref": "MineDeployNotificationTopic"
           }
         ],
-        "Period": 120,
+        "Period": 60,
         "Statistic": "Minimum",
         "Threshold": 1.0,
         "TreatMissingData": "notBreaching"
