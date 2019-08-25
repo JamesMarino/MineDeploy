@@ -1,0 +1,48 @@
+[
+  {
+    "Environment": [
+      {
+        "Name": "INSTANCE_NAME",
+        "Value": "${minecraft_backup_instance_name}"
+      },
+      {
+        "Name": "S3_BUCKET_NAME",
+        "Value": "${minecraft_backup_bucket_name}"
+      },
+      {
+        "Name": "EBS_VOLUME_NAME",
+        "Value": "${minecraft_volume_name}"
+      },
+      {
+        "Name": "AWS_REGION",
+        "Value": "${aws_region}"
+      },
+      {
+        "Name": "AWS_AZ",
+        "Value": "${availability_zone}"
+      }
+    ],
+    "Image": "minedeploy/backup:latest",
+    "Cpu": 128,
+    "Memory": 200,
+    "Name": "MineDeployBackup",
+    "LogConfiguration": {
+      "LogDriver": "awslogs",
+      "Options": {
+        "awslogs-group": "${mine_deploy_log_group}",
+        "awslogs-region": "${aws_region}",
+        "awslogs-stream-prefix": "${minecraft_backup_service_name}"
+      }
+    },
+    "MountPoints": [
+      {
+        "SourceVolume": "TempVolume",
+        "ContainerPath": "/root/backup"
+      },
+      {
+        "SourceVolume": "DockerSocket",
+        "ContainerPath": "/var/run/docker.sock"
+      }
+    ]
+  }
+]

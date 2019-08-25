@@ -1,7 +1,14 @@
 # Mine Deploy
 
-CloudFormation Stack Minecraft Server Deployment on ECS.
+Terraform Deployment of MineCraft to AWS ECS
 
-Easy and quick way to get Minecraft running on AWS.
+Running
 
-See `/platform` to get the stack deployed
+1. Edit `production.tfvars`
+2. Edit `workspace.tf`
+3. Run the following
+
+```bash
+terraform plan -out plan.tfstate -var-file=production.tfvars
+terraform apply plan.tfstate
+```
