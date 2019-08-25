@@ -1,0 +1,90 @@
+[
+  {
+    "Environment": [
+      {
+        "Name": "EULA",
+        "Value": "TRUE"
+      },
+      {
+        "Name": "OVERRIDE_SERVER_PROPERTIES",
+        "Value": "TRUE"
+      },
+      {
+        "Name": "MEMORY",
+        "Value": "${minecraft_memory_limit}"
+      },
+      {
+        "Name": "SERVER_NAME",
+        "Value": "${minecraft_server_name}"
+      },
+      {
+        "Name": "DIFFICULTY",
+        "Value": "${minecraft_difficulty}"
+      },
+      {
+        "Name": "ALLOW_NETHER",
+        "Value": "${minecraft_allow_nether}"
+      },
+      {
+        "Name": "GENERATE_STRUCTURES",
+        "Value": "${minecraft_generate_structures}"
+      },
+      {
+        "Name": "SPAWN_ANIMALS",
+        "Value": "${minecraft_spawn_animals}"
+      },
+      {
+        "Name": "SPAWN_NPCS",
+        "Value": "${minecraft_spawn_npcs}"
+      },
+      {
+        "Name": "MOTD",
+        "Value": "${minecraft_message_of_the_day}"
+      },
+      {
+        "Name": "ALLOW_FLIGHT",
+        "Value": "${minecraft_allow_flight}"
+      },
+      {
+        "Name": "MODE",
+        "Value": "${minecraft_mode}"
+      },
+      {
+        "Name": "ENABLE_COMMAND_BLOCK",
+        "Value": "${minecraft_enable_command_blocks}"
+      },
+      {
+        "Name": "OPS",
+        "Value": "${minecraft_admin_players}"
+      },
+      {
+        "Name": "WORLD",
+        "Value": "${minecraft_world_zip_url}"
+      }
+    ],
+    "Image": "itzg/minecraft-server:latest",
+    "Cpu": 1920,
+    "Memory": 7721,
+    "Name": "${mine_deploy_container_name}",
+    "PortMappings": [
+      {
+        "ContainerPort": 25565,
+        "HostPort": 25565
+      }
+    ],
+    "LogConfiguration": {
+      "LogDriver": "awslogs",
+      "Options": {
+        "awslogs-group": "${mine_deploy_log_group}",
+        "awslogs-region": "${aws_region}",
+        "awslogs-stream-prefix": "${minecraft_service_name}"
+      }
+    },
+    "MountPoints": [
+      {
+        "ContainerPath": "/data",
+        "SourceVolume": "${mine_deploy_volume_name}"
+      }
+    ]
+  }
+]
